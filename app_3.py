@@ -34,6 +34,37 @@ class Main(QMainWindow, FORM_CLASS):
                 self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
         print('GET_DATA function')
 
+        # Generating statistics
+        cursor2 = db.cursor()
+        cursor3 = db.cursor()
+        cursor4 = db.cursor()
+        cursor5 = db.cursor()
+
+        parts_nbr = '''SELECT COUNT (DISTINCT PartName) FROM parts_table'''
+        ref_nbr = '''SELECT COUNT (DISTINCT Reference) FROM parts_table'''
+        result_ref_nbr = cursor2.execute(parts_nbr)
+        result_part_nbr = cursor3.execute(parts_nbr)
+
+        self.lbl_ref_nbr.setText(str(result_ref_nbr.fetchone()[0]))
+        self.lbl_part_nbr.setText(str(result_part_nbr.fetchone()[0]))
+
+        # Print results of min, max, etc
+        min_hole = '''SELECT MIN(NumberOfHoles), Reference from parts_table'''
+        max_hole = '''SELECT MAX(NumberOfHoles), Reference from parts_table'''
+
+        results_min_hole = cursor4.execute(min_hole)
+        results_max_hole = cursor5.execute(max_hole)
+
+        r1 = results_min_hole.fetchone()
+        r2 = results_max_hole.fetchone()
+
+        # Print results
+        self.lbl_min_hole.setText(str(r1[0]))
+        self.lbl_max_hole.setText(str(r2[0]))
+        self.lbl_min_hole_2.setText(str(r1[1]))
+        self.lbl_min_hole_2.setText(str(r2[1]))
+
+
     def SEARCH(self):
         db = sqlite3.connect('pythonsqlite.db')
         cursor = db.cursor()
@@ -51,8 +82,6 @@ class Main(QMainWindow, FORM_CLASS):
                 self.table.setItem(row_number, column_number, QTableWidgetItem(str(data)))
 
         print('SEARCH function')
-
-    # Here is our code
 
 def main():
     app = QApplication(sys.argv)
